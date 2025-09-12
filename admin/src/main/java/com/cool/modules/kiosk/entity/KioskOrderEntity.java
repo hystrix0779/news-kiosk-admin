@@ -10,6 +10,7 @@ import org.dromara.autotable.annotation.IndexField;
 import org.dromara.autotable.annotation.enums.IndexSortTypeEnum;
 import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,17 +31,20 @@ public class KioskOrderEntity extends TenantEntity<KioskOrderEntity> {
     private Integer payType;
 
     @ColumnDefine(comment = "支付时间", type = "datetime")
-    private Date payTime;
+    private LocalDateTime payTime;
 
     @Index
     @ColumnDefine(comment = "订单号")
     private String orderNum;
 
-    @ColumnDefine(comment = "状态 0-待付款 1-待发货 2-待收货 3-待评价 4-交易完成 5-退款中 6-已退款 7-已关闭", defaultValue = "0", notNull = true)
+    @ColumnDefine(comment = "状态 0-待付款 1-待打印 4-交易完成 5-退款中 6-已退款 7-已关闭", defaultValue = "0", notNull = true)
     private Integer status;
 
     @ColumnDefine(type = "DECIMAL(10,2)", comment = "价格")
     private BigDecimal price;
+
+    @ColumnDefine(comment = "数量")
+    private Integer count;
 
     @ColumnDefine(comment = "备注")
     private String remark;
@@ -50,5 +54,17 @@ public class KioskOrderEntity extends TenantEntity<KioskOrderEntity> {
 
     @Column(ignore = true)
     private String qrCode;
+
+    @ColumnDefine(comment = "模板Id")
+    private Long templateId;
+
+    @ColumnDefine(comment = "机器Id")
+    private Long machineId;
+
+    @ColumnDefine(comment = "图片地址")
+    private String pic;
+
+    @ColumnDefine(comment = "文件路径")
+    private String filePath;
 
 }

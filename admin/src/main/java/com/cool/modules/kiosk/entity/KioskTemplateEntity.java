@@ -31,6 +31,9 @@ public class KioskTemplateEntity extends BaseEntity<KioskTemplateEntity> {
     @ColumnDefine(comment = "MD5")
     private String md5;
 
+    @ColumnDefine(comment = "机器ID")
+    private Long machineId;
+
     @ColumnDefine(comment = "价格",type = "decimal(10,2)")
     private BigDecimal price;
     
