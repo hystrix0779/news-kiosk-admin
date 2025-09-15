@@ -1,10 +1,14 @@
 package com.cool.modules.kiosk.ws;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Service;
 
 import com.cool.modules.kiosk.entity.KioskOrderEntity;
 import com.cool.modules.kiosk.mapper.KioskOrderMapper;
 import com.cool.modules.kiosk.pojo.KioskMessagePojo;
+import com.cool.modules.order.enums.OrderStatusEnum;
+import com.mybatisflex.core.query.QueryWrapper;
 
 import cn.hutool.json.JSONObject;
 import jakarta.annotation.Resource;
@@ -56,6 +60,15 @@ public class InstructionService {
     public void sendPrintInstruction(Long orderId) {
         KioskOrderEntity order = kioskOrderMapper.selectOneById(orderId);
         KioskMessagePojo pojo = kioskWebSocketHandler.getKioskMessagePojo(order.getMachineId());
+        if (Objects.isNull(pojo)) {
+            KioskOrderEntity updateOrder = new KioskOrderEntity();
+            updateOrder.setStatus(OrderStatusEnum.TRANSACTION_FAILED.getCode());
+            updateOrder.setPayType(2);
+            updateOrder.setRemark("设备离线");
+            kioskOrderMapper.updateByQuery(updateOrder,
+                    QueryWrapper.create().eq(KioskOrderEntity::getOrderNum, order.getOrderNum()));
+            return;
+        }
         pojo.setType(3);
         pojo.setInstruction(createPrintOrderInstruction(order.getFilePath(), order.getOrderNum()));
         kioskWebSocketHandler.sendToDevice(pojo);

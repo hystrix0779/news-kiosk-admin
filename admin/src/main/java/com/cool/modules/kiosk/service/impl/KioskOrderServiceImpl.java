@@ -46,8 +46,7 @@ public class KioskOrderServiceImpl extends BaseServiceImpl<KioskOrderMapper, Kio
         if (Objects.isNull(order.getMachineId())||Objects.isNull(order.getTemplateId())) {
             throw new CoolException("参数错误");
         }
-
-
+        
         // 查询模板
         KioskTemplateEntity template = kioskTemplateMapper.selectOneById(order.getTemplateId());
         if (template == null) {
