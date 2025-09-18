@@ -35,11 +35,11 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity<T>> e
 
     @Override
     public Object addBatch(JSONObject requestParams, List<T> entitys) {
-        this.modifyBefore(requestParams, null, ModifyEnum.ADD);
+        // this.modifyBefore(requestParams, null, ModifyEnum.ADD);
         List<Long> ids = new ArrayList<>();
         entitys.forEach(e -> ids.add(this.add(e)));
         requestParams.set("ids", ids);
-        this.modifyAfter(requestParams, null, ModifyEnum.ADD);
+        // this.modifyAfter(requestParams, null, ModifyEnum.ADD);
         return ids;
     }
 

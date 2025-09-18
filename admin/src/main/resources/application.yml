@@ -44,10 +44,10 @@ spring:
     type: redis
   data:
     redis:
-      host: 43.138.7.97
-      port: 14552
-      # host: 1Panel-redis-aH2P
-      # port: 6379
+      # host: 43.138.7.97
+      # port: 14552
+      host: 1Panel-redis-aH2P
+      port: 6379
       database: 0
       password: nLbVZRcrS5Tdi
   quartz:
