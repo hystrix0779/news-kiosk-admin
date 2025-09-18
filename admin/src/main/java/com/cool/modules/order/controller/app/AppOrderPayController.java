@@ -1,28 +1,18 @@
 package com.cool.modules.order.controller.app;
 
 import cn.hutool.core.net.URLDecoder;
-import cn.hutool.json.JSONObject;
 import com.cool.core.annotation.CoolRestController;
 import com.cool.core.annotation.TokenIgnore;
-import com.cool.core.exception.CoolPreconditions;
 import com.cool.core.request.R;
 import com.cool.modules.kiosk.entity.KioskOrderEntity;
+import com.cool.modules.kiosk.pojo.KioskOrderPojo;
 import com.cool.modules.kiosk.service.KioskOrderService;
+import com.cool.modules.kiosk.ws.InstructionService;
 import com.cool.modules.order.pay.AliPayService;
 import com.cool.modules.order.pay.WeChatPayService;
-import com.cool.modules.user.proxy.WxProxy;
-import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
-import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderV3Result.JsapiResult;
-import com.github.binarywang.wxpay.service.WxPayService;
-import com.github.binarywang.wxpay.util.SignUtils;
-import com.google.common.collect.Maps;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,11 +39,20 @@ public class AppOrderPayController {
 
     private final KioskOrderService kioskOrderService;
 
-    @PostMapping(value = "/create")
+    private final InstructionService instructionService;
+
+    @PostMapping("/create")
     @ResponseBody
     @TokenIgnore
-    public R<KioskOrderEntity> create(@RequestBody KioskOrderEntity kioskOrderEntity) {
-        return R.ok(kioskOrderService.create(kioskOrderEntity));
+    public R<KioskOrderEntity> create(@RequestBody KioskOrderPojo pojo) {
+        return R.ok(kioskOrderService.create(pojo));
+    }
+
+    @PostMapping("/updateOrder")
+    @ResponseBody
+    @TokenIgnore
+    public R<KioskOrderEntity> updateOrder(@RequestBody KioskOrderPojo pojo) {
+        return R.ok(kioskOrderService.updateOrder(pojo));
     }
 
     @RequestMapping(value = "/native/notify_url", method = { RequestMethod.POST, RequestMethod.GET })
@@ -90,4 +89,12 @@ public class AppOrderPayController {
         return aliPayService.aliH5Notify(params);
     }
 
+    // 发送测试
+    @GetMapping("/sendTest")
+    @ResponseBody
+    @TokenIgnore
+    public R<String> sendTest(@RequestParam String orderNum) {
+        instructionService.sendPrintInstruction(orderNum);
+        return R.ok("success");
+    }
 }

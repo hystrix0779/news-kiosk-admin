@@ -1,6 +1,8 @@
 package com.cool.modules.kiosk.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.dromara.autotable.annotation.Ignore;
 
 import com.cool.core.base.BaseEntity;
@@ -60,4 +62,12 @@ public class KioskMachineEntity extends BaseEntity<KioskMachineEntity> {
     @Ignore
     @Column(ignore = true)
     private Boolean online;
+
+    @Ignore
+    @Column(ignore = true)
+    private Boolean reset;
+
+    @Ignore
+    @Column(ignore = true)
+    private List<KioskTemplateEntity> templates;
 }

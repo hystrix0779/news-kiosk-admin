@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson2.JSON;
 import com.cool.core.config.pay.WxNativeConfig;
 import com.cool.core.exception.CoolException;
@@ -114,6 +116,7 @@ public class WeChatPayService {
     }
 
     @SneakyThrows
+    @Transactional(rollbackFor = Exception.class)
     public String nativeNotify() {
         String xmlMsg = HttpKit.readData(request);
         System.out.println("支付通知=" + xmlMsg);
@@ -140,7 +143,7 @@ public class WeChatPayService {
                 order.setPayTime(LocalDateTime.now());
                 kioskOrderMapper.updateByQuery(order,
                         QueryWrapper.create().eq(KioskOrderEntity::getOrderNum, orderNum));
-                instructionService.sendPrintInstruction(order.getId());
+                instructionService.sendPrintInstruction(orderNum);
 
                 // 发送通知等
                 Map<String, String> xml = new HashMap<String, String>(2);

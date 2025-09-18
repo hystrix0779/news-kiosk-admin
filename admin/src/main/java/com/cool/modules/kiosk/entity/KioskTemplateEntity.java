@@ -39,4 +39,8 @@ public class KioskTemplateEntity extends BaseEntity<KioskTemplateEntity> {
     
     @ColumnDefine(comment = "是否默认",defaultValue = "0")
     private Integer isDefault;
+
+    //父级id
+    @ColumnDefine(comment = "父级id")
+    private Long parentId;
 }

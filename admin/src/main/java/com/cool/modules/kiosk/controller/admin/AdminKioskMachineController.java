@@ -29,7 +29,7 @@ public class AdminKioskMachineController extends BaseController<KioskMachineServ
 
     @Operation(summary = "激活")
     @GetMapping("/activate")
-    public R<Long> activate(@RequestParam String key) {
+    public R<KioskMachineEntity> activate(@RequestParam String key) {
         return R.ok(service.activate(key));
     }
 }

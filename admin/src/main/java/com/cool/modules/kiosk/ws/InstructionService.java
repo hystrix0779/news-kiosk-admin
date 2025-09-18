@@ -42,13 +42,14 @@ public class InstructionService {
     /**
      * 创建直接打印订单命令
      */
-    public KioskMessagePojo.Instruction createPrintOrderInstruction(String filePath, String orderNum) {
+    public KioskMessagePojo.Instruction createPrintOrderInstruction(String filePath, String orderNum ,Integer count) {
         KioskMessagePojo.Instruction instruction = new KioskMessagePojo.Instruction();
         instruction.setType("printOrder");
         instruction.setContent("打印订单");
         JSONObject params = new JSONObject();
         params.set("filePath", filePath);
         params.set("orderNum", orderNum);
+        params.set("count", count);
         instruction.setParams(params);
         return instruction;
     }
@@ -57,8 +58,9 @@ public class InstructionService {
      * 发送打印命令
      */
     @SneakyThrows
-    public void sendPrintInstruction(Long orderId) {
-        KioskOrderEntity order = kioskOrderMapper.selectOneById(orderId);
+    public void sendPrintInstruction(String orderNum) {
+        KioskOrderEntity order = kioskOrderMapper.selectOneByQuery(
+                QueryWrapper.create().eq(KioskOrderEntity::getOrderNum, orderNum));
         KioskMessagePojo pojo = kioskWebSocketHandler.getKioskMessagePojo(order.getMachineId());
         if (Objects.isNull(pojo)) {
             KioskOrderEntity updateOrder = new KioskOrderEntity();
@@ -70,7 +72,7 @@ public class InstructionService {
             return;
         }
         pojo.setType(3);
-        pojo.setInstruction(createPrintOrderInstruction(order.getFilePath(), order.getOrderNum()));
+        pojo.setInstruction(createPrintOrderInstruction(order.getFilePath(), order.getOrderNum(), order.getCount()));
         kioskWebSocketHandler.sendToDevice(pojo);
     }
 

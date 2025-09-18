@@ -27,6 +27,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 
 import cn.hutool.json.JSONUtil;
 import jakarta.annotation.Resource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -148,7 +149,8 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
         currentConn.remove(id);
     }
 
-    public void sendToDevice(KioskMessagePojo pojo) throws IOException {
+    @SneakyThrows
+    public void sendToDevice(KioskMessagePojo pojo) {
         WebSocketSession session = sessionMap.get(pojo.getId());
         if (session != null && session.isOpen()) {
             // List<String> types =

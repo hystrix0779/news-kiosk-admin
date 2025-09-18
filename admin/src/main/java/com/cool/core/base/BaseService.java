@@ -179,4 +179,11 @@ public interface BaseService<T> extends IService<T> {
      * @author Created by niulixiong(hystrix0779@yeah.net) on 2024/8/21/10:00.
      */
     void completion(List<T> list);
+    
+    /**
+     * 查询之前
+     * @param requestParams 请求参数
+     * @param queryWrapper  查询条件
+     */
+    void queryBefore(JSONObject requestParams, QueryWrapper queryWrapper);
 }

@@ -5,13 +5,14 @@ import com.cool.core.base.TenantEntity;
 
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
+
+import org.dromara.autotable.annotation.Ignore;
 import org.dromara.autotable.annotation.Index;
 import org.dromara.autotable.annotation.IndexField;
 import org.dromara.autotable.annotation.enums.IndexSortTypeEnum;
 import com.tangzc.mybatisflex.autotable.annotation.ColumnDefine;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -66,5 +67,13 @@ public class KioskOrderEntity extends TenantEntity<KioskOrderEntity> {
 
     @ColumnDefine(comment = "文件路径")
     private String filePath;
+
+    @Ignore
+    @Column(ignore = true)
+    private String machineName;
+
+    @Ignore
+    @Column(ignore = true)
+    private String templateName;
 
 }

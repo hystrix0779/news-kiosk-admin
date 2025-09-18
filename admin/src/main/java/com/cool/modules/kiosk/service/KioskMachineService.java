@@ -12,5 +12,5 @@ public interface KioskMachineService extends BaseService<KioskMachineEntity> {
      * @param key
      * @return
      */
-    Long activate(String key);
+    KioskMachineEntity activate(String key);
 }

@@ -24,7 +24,7 @@ public class KioskMessagePojo {
     private LocalDateTime loginTime;
     private List<Instruction> instructions;
     /**
-     * 打印类型 1/null：连接 2：日志 3：指令 4：打印成功 5：打印失败
+     * 打印类型 1/null：连接 2：日志 3：指令 4：打印成功 5：打印失败 6:更新配置
      */
     private Integer type;
     private KioskMachineErrEntity err;

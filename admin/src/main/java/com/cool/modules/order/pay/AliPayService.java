@@ -127,7 +127,7 @@ public class AliPayService {
                 order.setPayTime(LocalDateTime.now());
                 kioskOrderMapper.updateByQuery(order,
                         QueryWrapper.create().eq(KioskOrderEntity::getOrderNum, outTradeNo));
-                instructionService.sendPrintInstruction(order.getId());
+                instructionService.sendPrintInstruction(outTradeNo);
                 return "success";
             } else {
                 System.out.println("notify_url 验证失败");

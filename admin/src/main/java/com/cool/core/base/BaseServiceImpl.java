@@ -75,6 +75,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity<T>> e
 
     @Override
     public Object list(JSONObject requestParams, QueryWrapper queryWrapper) {
+        this.queryBefore(requestParams, queryWrapper);
         List<T> list = this.list(queryWrapper);
         completion(list);
         return list;
@@ -92,6 +93,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity<T>> e
 
     @Override
     public Object page(JSONObject requestParams, Page<T> page, QueryWrapper queryWrapper) {
+        this.queryBefore(requestParams, queryWrapper);
         Page<T> tPage = this.page(page, queryWrapper);
         completion(tPage.getRecords());
         return tPage;
@@ -141,6 +143,11 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends BaseEntity<T>> e
 
     @Override
     public void completion(List<T> list) {
+
+    }
+
+    @Override
+    public void queryBefore(JSONObject requestParams, QueryWrapper queryWrapper) {
 
     }
 

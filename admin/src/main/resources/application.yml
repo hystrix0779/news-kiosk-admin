@@ -9,6 +9,9 @@ server:
 spring:
   application:
     name: cool-admin-java
+  config:
+    import:
+      - classpath:pay.yml
   profiles:
     active: @spring.active@
   thymeleaf:
@@ -90,6 +93,9 @@ ignored:
     - /druid/**
     - /admin/base/open/**
     - /admin/kiosk/machine/activate
+    - /app/order/pay/update
+    - /admin/kiosk/template/infoById
+    - /ws/kiosk
   # 忽略记录请求日志url
   logUrls:
     - /
