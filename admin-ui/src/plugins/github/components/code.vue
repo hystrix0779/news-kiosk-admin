@@ -1,7 +1,8 @@
 <template>
-	<div class="cl-comm__icon" @click="toCode">
-		<cl-svg name="github" />
-	</div>
+	<div></div>
+	<!-- <div class="cl-comm__icon" @click="toCode"> -->
+	<!-- <cl-svg name="github" /> -->
+	<!-- </div> -->
 </template>
 
 <script setup lang="ts">

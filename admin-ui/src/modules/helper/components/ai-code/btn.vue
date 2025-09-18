@@ -1,8 +1,9 @@
 <template>
-	<div class="cl-comm__icon" @click="toCode">
+	<div></div>
+	<!-- <div class="cl-comm__icon" @click="toCode">
 		<div class="t1">{{ $t('AI极速编码') }}</div>
 		<div class="t2">Start</div>
-	</div>
+	</div> -->
 </template>
 
 <script setup lang="ts">

@@ -1,10 +1,11 @@
 <template>
-	<iframe
+	<div></div>
+	<!-- <iframe
 		:src="`${helper.index}${path}?lang=${ctx.serviceLang}`"
 		class="iframe"
 		:class="{ 'is-hide': hide }"
 		ref="iframeRef"
-	/>
+	/> -->
 </template>
 
 <script setup lang="ts">

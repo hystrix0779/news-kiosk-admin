@@ -38,7 +38,7 @@
 			</div>
 		</div>
 
-		<div
+		<!-- <div
 			class="dev-tools__close hidden-sm-and-down"
 			:class="{
 				'is-hide': !visible
@@ -47,7 +47,7 @@
 			v-if="isDev"
 		>
 			<i class="iconfont icon-xia"></i>
-		</div>
+		</div> -->
 	</teleport>
 </template>
 

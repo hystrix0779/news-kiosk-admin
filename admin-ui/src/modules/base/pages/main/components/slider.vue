@@ -61,12 +61,12 @@ const keyWord = ref('');
 		display: flex;
 		align-items: center;
 		height: 66px;
-		padding: 0 21px;
+		padding: 0 72px;
 		user-select: none;
 
 		img {
 			height: 24px;
-			width: 24px;
+			width: 38px;
 		}
 
 		span {

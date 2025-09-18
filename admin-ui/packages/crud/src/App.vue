@@ -109,8 +109,8 @@ const Upsert = useUpsert<Data>({
 		}
 	],
 	onOpened(data) {
-		console.log(data);
-		Upsert.value?.setForm("age", "18");
+		Upsert.console.log(data);
+		value?.setForm("age", "18");
 	}
 });
 
