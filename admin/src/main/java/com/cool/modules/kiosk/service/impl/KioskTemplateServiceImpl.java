@@ -36,6 +36,9 @@ public class KioskTemplateServiceImpl extends BaseServiceImpl<KioskTemplateMappe
 
     @Override
     public void modifyBefore(JSONObject requestParams, KioskTemplateEntity t, ModifyEnum type) {
+        if (type == ModifyEnum.DELETE) {
+            return;
+        }
         if (t.getMachineId() != null && t.getIsDefault() == 1) {
             // 把这个机器的所有默认全部去掉
             KioskTemplateEntity update = new KioskTemplateEntity();
@@ -50,6 +53,9 @@ public class KioskTemplateServiceImpl extends BaseServiceImpl<KioskTemplateMappe
 
     @Override
     public void modifyBefore(JSONObject requestParams, KioskTemplateEntity t) {
+        if (t == null) {
+            return;
+        }
         if (t.getMachineId() != null && t.getIsDefault() == 1) {
             // 把这个机器的所有默认全部去掉
             KioskTemplateEntity update = new KioskTemplateEntity();

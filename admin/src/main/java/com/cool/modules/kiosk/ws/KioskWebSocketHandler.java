@@ -39,18 +39,14 @@ import lombok.extern.slf4j.Slf4j;
 public class KioskWebSocketHandler extends TextWebSocketHandler {
 
     private final Map<Long, KioskMessagePojo> currentConn = new ConcurrentHashMap<>();
-
     private final Map<Long, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
     @Resource
     private KioskMachineMapper KioskMachineMapper;
-
     @Resource
     private KioskMachineLogMapper KioskMachineLogMapper;
-
     @Resource
     private KioskMachineErrMapper KioskMachineErrMapper;
-
     @Resource
     private KioskOrderMapper kioskOrderMapper;
 
@@ -68,9 +64,7 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
         String key = paramMap.get("key");
 
         if (id == null || key == null) {
-            // 发送拒绝消息
             session.sendMessage(new TextMessage("连接拒绝：缺少id或key"));
-            // 主动关闭连接
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason("缺少id或key参数"));
             return;
         }
@@ -85,9 +79,26 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason("key错误"));
             return;
         }
+
+        // 清除之前的连接，防止重复连接
+        if (sessionMap.containsKey(id)) {
+            WebSocketSession oldSession = sessionMap.get(id);
+            if (oldSession.isOpen()) {
+                oldSession.close(CloseStatus.NORMAL);
+            }
+            sessionMap.remove(id);
+            currentConn.remove(id);
+        }
+
         session.getAttributes().put("id", id);
         sessionMap.put(id, session);
         log.info("WebSocket连接建立成功，id={}, key={}", id, key);
+
+        // 发送登录成功信息
+        KioskMessagePojo KioskMessage = new KioskMessagePojo();
+        KioskMessage.setId(id);
+        KioskMessage.setLoginTime(LocalDateTime.now());
+        currentConn.put(id, KioskMessage);
     }
 
     @Override
@@ -97,19 +108,20 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage("success"));
             return;
         }
-        KioskMessagePojo KioskMessage = JSONUtil.toBean(payload, KioskMessagePojo.class);
 
+        KioskMessagePojo KioskMessage = JSONUtil.toBean(payload, KioskMessagePojo.class);
         log.info("收到消息: {}", KioskMessage);
 
-        // 保存 session
         Long id = KioskMessage.getId();
         if (id == null) {
             session.sendMessage(new TextMessage("缺少必要参数"));
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason("缺少必要参数"));
             return;
         }
-        // 连接信息
+
+        // 连接信息处理
         if (KioskMessage.getType() == null || KioskMessage.getType() == 1) {
+            // 更新连接状态
             if (!sessionMap.containsKey(id)) {
                 session.sendMessage(new TextMessage("非法链接"));
                 session.close(CloseStatus.NOT_ACCEPTABLE.withReason("非法链接"));
@@ -118,20 +130,22 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
             KioskMessage.setLoginTime(LocalDateTime.now());
             currentConn.put(id, KioskMessage);
         } else if (KioskMessage.getType() == 2) {
+            // 错误信息
             KioskMachineErrMapper.insert(KioskMessage.getErr());
         } else if (KioskMessage.getType() == 4) {
+            // 打印成功
             KioskOrderEntity order = new KioskOrderEntity();
             order.setStatus(OrderStatusEnum.TRANSACTION_COMPLETE.getCode());
             kioskOrderMapper.updateByQuery(order,
                     QueryWrapper.create().eq(KioskOrderEntity::getOrderNum, KioskMessage.getOrderNum()));
         } else if (KioskMessage.getType() == 5) {
+            // 打印失败
             KioskOrderEntity order = new KioskOrderEntity();
             order.setStatus(OrderStatusEnum.TRANSACTION_FAILED.getCode());
             order.setRemark(KioskMessage.getRemark());
             kioskOrderMapper.updateByQuery(order,
                     QueryWrapper.create().eq(KioskOrderEntity::getOrderNum, KioskMessage.getOrderNum()));
         }
-        // 错误信息
         session.sendMessage(new TextMessage("success"));
     }
 
@@ -140,11 +154,13 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
         Long id = (Long) session.getAttributes().get("id");
         log.info("WebSocket连接关闭: sessionId={}, id={}", session.getId(), id);
         KioskMessagePojo KioskMessage = currentConn.get(id);
-        KioskMachineLogEntity KioskMachineLogEntity = new KioskMachineLogEntity();
-        KioskMachineLogEntity.setMachineId(id);
-        KioskMachineLogEntity.setLoginTime(KioskMessage.getLoginTime());
-        KioskMachineLogEntity.setLogoutTime(LocalDateTime.now());
-        KioskMachineLogMapper.insert(KioskMachineLogEntity);
+        if (KioskMessage != null) {
+            KioskMachineLogEntity KioskMachineLogEntity = new KioskMachineLogEntity();
+            KioskMachineLogEntity.setMachineId(id);
+            KioskMachineLogEntity.setLoginTime(KioskMessage.getLoginTime());
+            KioskMachineLogEntity.setLogoutTime(LocalDateTime.now());
+            KioskMachineLogMapper.insert(KioskMachineLogEntity);
+        }
         sessionMap.remove(id);
         currentConn.remove(id);
     }
@@ -153,11 +169,9 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
     public void sendToDevice(KioskMessagePojo pojo) {
         WebSocketSession session = sessionMap.get(pojo.getId());
         if (session != null && session.isOpen()) {
-            // List<String> types =
-            // currentConn.get(pojo.getId()).getInstructions().stream().map(i -> {
-            // return i.getType();
-            // }).toList();
             session.sendMessage(new TextMessage(JSONUtil.toJsonStr(pojo)));
+        } else {
+            log.warn("WebSocket session for deviceId={} not found or not open", pojo.getId());
         }
     }
 
@@ -172,3 +186,4 @@ public class KioskWebSocketHandler extends TextWebSocketHandler {
         return currentConn.get(deviceId);
     }
 }
+
