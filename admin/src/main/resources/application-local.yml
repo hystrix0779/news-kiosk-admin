@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://43.138.7.97:14551/news-kiosk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
+    url: jdbc:mysql://118.145.247.136:10001/news-kiosk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2b8
     username: root
     password: tt2E5r1WLnzhW
     driver-class-name: com.mysql.cj.jdbc.Driver
